@@ -1,7 +1,7 @@
 ### Crypto Wars's To Do List:
 
 
-## Solidity
+## Solidity
 
 - Limit resources to total capacity
 
