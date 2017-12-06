@@ -35,7 +35,7 @@ Please check the [documentation](https://e11-io.github.io/crypto-wars-solidity/)
 
 5. Run the tests.
     ```shell
-    truffle test
+    npm run test
     ```
 
 6. Compile the docs.
