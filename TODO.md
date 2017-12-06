@@ -1,7 +1,7 @@
-### Crypto Wars's To Do List:
+# Crypto Wars's To Do List:
 
 
-## Solidity
+### Solidity
 
 - Limit resources to total capacity
 
@@ -22,7 +22,7 @@
 - Quantum Dust (Freeze | Burn)
 
 
-## Web
+### Web
 
 - UI Design
 
