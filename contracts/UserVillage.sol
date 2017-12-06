@@ -5,6 +5,7 @@ import 'zeppelin-solidity/contracts/ownership/NoOwner.sol';
 import './UserBuildings.sol';
 import './UserResources.sol';
 import './UserVault.sol';
+import './BuildingsData.sol';
 
 /**
  * @title UserVillage (WIP)
@@ -32,7 +33,8 @@ contract UserVillage is NoOwner {
 	UserVault userVault;
 	UserResources userResources;
 	UserBuildings userBuildings;
-	uint[] initialBuildingsIds = [uint(1),uint(2), uint(3)] ;
+	BuildingsData buildingsData;
+	uint[] initialBuildingsIds;
 
 
 	/**
@@ -46,6 +48,16 @@ contract UserVillage is NoOwner {
 		userResources = UserResources(_userResources);
 		userBuildings = UserBuildings(_userBuildings);
 	}
+
+	/**
+   * @notice Instantiate Buildings Data contract.
+   * @dev Function to provide Buildings Data address and instantiate it.
+   * @param _buildingsData the address of Buildings Data contract. (address)
+   */
+  function setBuildingsData(address _buildingsData) external onlyOwner {
+    buildingsData = BuildingsData(_buildingsData);
+  }
+
 
 	/**
    * @notice Creates a new village
@@ -62,12 +74,22 @@ contract UserVillage is NoOwner {
 		// Check and Transfer user's token.
 		require(userVault.add(msg.sender, 1 ether)); // 'could_not_transfer_tokens'
 		require(userResources.initUserResources(msg.sender));
-		require(userResources.initPayoutBlock(msg.sender));
+		userResources.initPayoutBlock(msg.sender);
 		require(userBuildings.addInitialBuildings(msg.sender, initialBuildingsIds));
 
 		villages[msg.sender] = _name;
 		addresses[keccak256(_username)] = msg.sender;
 		VillageCreated(msg.sender, _name, _username);
   }
+
+	function setInitialBuildings(uint[] _ids) external onlyOwner {
+		if (_ids.length > 0) {
+			for (uint i = 0; i < _ids.length; i++) {
+				require(buildingsData.checkBuildingExist(_ids[i]));
+			}
+		}
+
+		initialBuildingsIds = _ids;
+	}
 
 }

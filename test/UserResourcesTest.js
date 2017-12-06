@@ -23,6 +23,7 @@ contract('User Resources Test', (accounts) => {
   const goldAmount = 2000;
   const crystalAmount = 3000;
   const quantumAmount = 500;
+  const initialUserBuildings = [1, 2, 3];
 
   beforeEach(async () => {
     experimentalToken = await ExperimentalToken.new();
@@ -42,6 +43,9 @@ contract('User Resources Test', (accounts) => {
     await userResources.setUserBuildings(userBuildings.address);
     await userBuildings.setUserVillage(userVillage.address);
     await userBuildings.setUserResources(userResources.address);
+    await userBuildings.setBuildingsQueue(buildingsQueue.address);
+    await userVault.setUserVillage(userVillage.address);
+    await userVillage.setBuildingsData(buildingsData.address);
     await buildingsData.addBuilding(buildingsMock.initialBuildings[0].id,
       buildingsMock.initialBuildings[0].name,
       buildingsMock.initialBuildings[0].stats);
@@ -57,6 +61,7 @@ contract('User Resources Test', (accounts) => {
     await buildingsData.addBuilding(buildingsMock.initialBuildings[8].id,
       buildingsMock.initialBuildings[8].name,
       buildingsMock.initialBuildings[8].stats);
+    await userVillage.setInitialBuildings(initialUserBuildings);
     await experimentalToken.approve(userVault.address, 1 * ether); // needed to create village
   })
 
@@ -77,6 +82,14 @@ contract('User Resources Test', (accounts) => {
     assert.equal(gold.toNumber(), goldAmount);
   })
 
+  it('try initializing user resources when user is initialized', async () => {
+    await userResources.setUserVillage(Alice);
+    await userResources.initUserResources(Bob);
+    return assertRevert(async () => {
+      await userResources.initUserResources(Bob);
+    })
+  })
+
   it('Set user village address as Alice', async () => {
     await userResources.setUserVillage(Alice);
     await userResources.initUserResources(Bob);
@@ -86,8 +99,44 @@ contract('User Resources Test', (accounts) => {
     assert.equal(gold.toNumber(), 0);
   })
 
+  it('Try consuming gold not from buildings queue contract', async () => {
+    return assertRevert(async () => {
+      await userResources.consumeGold(Alice, 200);
+    })
+  })
+
+  it('Try consuming crystal not from buildings queue contract', async () => {
+    return assertRevert(async () => {
+      await userResources.consumeCrystal(Alice, 200);
+    })
+  })
+
+  it('Try consuming quantum not from buildings queue contract', async () => {
+    return assertRevert(async () => {
+      await userResources.consumeQuantumDust(Alice, 200);
+    })
+  })
+
+  it('Try give Resources To User from random user', async () => {
+    return assertRevert(async () => {
+      await userResources.giveResourcesToUser(
+        Alice, goldAmount, crystalAmount, quantumAmount, {from: Bob}
+      );
+    })
+  })
+
+  it('Try init user payoutblock not from user village contract', async () => {
+    return assertRevert(async () => {
+      await userResources.initPayoutBlock(Alice);
+    })
+  })
+
   context('Resources initialized period', async () => {
     beforeEach(async () => {
+      await userResources.setInitialResources(...resourcesMock.initialResources);
+    })
+
+    it('Set initial resources with same default value for coverage', async () => {
       await userResources.setInitialResources(...resourcesMock.initialResources);
     })
 

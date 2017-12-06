@@ -20,7 +20,8 @@ export class AppComponent {
   ethBalance: any;
   e11Balance: any;
   section: string = 'village';
-  status: any;
+  lastBlock: number;
+  status: any = {};
 
   constructor(private contracts: ContractsService,
               private web3Service: Web3Service) {
@@ -29,10 +30,10 @@ export class AppComponent {
   ngOnInit(): void {
     this.contracts.init((error: string) => {
       if (error) {
-        console.log('contract init error');
-        console.log(error);
+        this.status = Object.assign({}, this.status, {error});
         return;
       }
+      this.status = Object.assign({}, this.status, {ready: true});
       this.watchAccount();
     });
   }
@@ -43,10 +44,9 @@ export class AppComponent {
       this.web3Service.lastBlock$.skip(1)
     ).subscribe((data) => {
       let accounts = data[0];
-      let lastBlock = data[1];
       this.accounts = accounts;
       this.account = accounts[0];
-      console.log('lastBlock:' + lastBlock);
+      this.lastBlock = data[1];
       this.refreshBalance();
     });
   }

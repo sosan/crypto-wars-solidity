@@ -45,154 +45,129 @@ export class ResourcesComponent implements OnInit {
 
   async getResources() {
     console.log('Getting Resources of ' + this.account);
-
-    try {
-      const transaction = await this.contracts.UserResourcesInstance.getUserResources.call(this.account, {from: this.account});
-
-      if (!transaction) {
-        console.log('User has no resources');
-        return false;
-      } else {
-        console.log('User resources');
-        let gold = transaction[0];
-        let crystal = transaction[1];
-        let dust = transaction[2];
-        console.log('gold: ' + gold.toNumber());
-        console.log('crystal: ' + crystal.toNumber());
-        console.log('dust: ' + dust.toNumber());
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting resources; see log.');
+    const result = await this.web3Service.callContract(
+      this.contracts.UserResourcesInstance.getUserResources,
+      [ this.account, {from: this.account} ]
+    );
+    if (!result || result.error) {
+      console.log('User has no resources');
+      return false;
+    } else {
+      console.log('User resources');
+      let gold = result[0];
+      let crystal = result[1];
+      let dust = result[2];
+      console.log('gold: ' + gold.toNumber());
+      console.log('crystal: ' + crystal.toNumber());
+      console.log('dust: ' + dust.toNumber());
+      return true;
     }
   }
+
   async getUserPayoutBlock() {
     console.log('Getting Payout Block of ' + this.account);
-
-    try {
-      const transaction = await this.contracts.UserResourcesInstance.getUserPayoutBlock.call(this.account, {from: this.account});
-
-      if (!transaction) {
-        console.log('User has no payout block');
-        return false;
-      } else {
-        console.log('User payout block: ' + transaction.toNumber());
-        this.web3Service.web3.eth.getBlock('pending').then((block) => {
-          console.log('Current block: ' + block.number);
-        });
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting payout block; see log.');
+    const result = await this.web3Service.callContract(
+      this.contracts.UserResourcesInstance.getUserPayoutBlock,
+      [ this.account, {from: this.account} ]
+    );
+    if (!result || result.error) {
+      console.log('User has no payout block');
+      return false;
+    } else {
+      console.log('User payout block: ' + result.toNumber());
+      this.web3Service.web3.eth.getBlock('pending').then((block) => {
+        console.log('Current block: ' + block.number);
+      });
+      return true;
     }
   }
 
   async payoutResources() {
     let payoutAddress = this.payoutAddress || this.account;
     console.log('Pay Resources to User ' + payoutAddress);
-
-    try {
-      const transaction = await this.contracts.UserResourcesInstance.payoutResources.sendTransaction(payoutAddress, {
-        from: this.account,
-        gas: 200000
-      });
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
+    await this.web3Service.sendContractTransaction(
+      this.contracts.UserResourcesInstance.payoutResources,
+      [ payoutAddress, {from: this.account, gas: 200000} ],
+      (error, data) => {
+        console.log(error? error : 'payout ready!');
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error paying resources to user; see log.');
-    }
+    );
   }
 
   async getUserBuildings() {
-
     console.log('Getting Buildings of ' + this.account);
-
-    try {
-      const transaction = await this.contracts.UserBuildingsInstance.getUserBuildings.call(this.account, {from: this.account});
-
-      if (!transaction) {
-        console.log('User has no buildings');
-        return false;
-      } else {
-        console.log('User buildings');
-        console.log(transaction);
-        let buildingsIds = [];
-        if (transaction.length) {
-          transaction.forEach(t => {
-            buildingsIds.push(t.toNumber());
-          });
-          this.getBuildingsData(buildingsIds).then(data => {
-            this.userBuildings = data;
-          });
-        }
-
-        return true;
+    const result = await this.web3Service.callContract(
+      this.contracts.UserBuildingsInstance.getUserBuildings,
+      [ this.account, {from: this.account} ]
+    );
+    if (!result || result.error) {
+      console.log('User has no buildings');
+      return false;
+    } else {
+      console.log('User buildings');
+      console.log(result);
+      let buildingsIds = [];
+      if (result.length) {
+        result.forEach(t => {
+          buildingsIds.push(t.toNumber());
+        });
+        this.getBuildingsData(buildingsIds).then(data => {
+          this.userBuildings = data;
+        });
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting buildings; see log.');
+
+      return true;
     }
   }
 
   async getAllBuildingsData() {
-
     console.log('Getting All Buildings data');
-
-    try {
-      let buildingsLength = await this.contracts.BuildingsDataInstance.getBuildingIdsLength.call({from: this.account})
-      buildingsLength = buildingsLength.toNumber();
-      let buildingsIds: any = [];
-      for (var i = 0; i < buildingsLength; i++) {
-        let buildingId = await this.contracts.BuildingsDataInstance.buildingIds.call(i, {from: this.account});
-        buildingsIds.push(buildingId.toNumber());
-      }
-
-      if (!buildingsIds) {
-        console.log('No buildings');
-        return false;
-      } else {
-        console.log('All buildings');
-        console.log(buildingsIds);
-        this.getBuildingsData(buildingsIds).then(result => {
-          this.buildingsData = result;
-        });
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting buildings; see log.');
+    let buildingsLength = await this.web3Service.callContract(
+      this.contracts.BuildingsDataInstance.getBuildingIdsLength,
+      [ {from: this.account} ]
+    );
+    buildingsLength = buildingsLength.toNumber();
+    let buildingsIds: any = [];
+    for (var i = 0; i < buildingsLength; i++) {
+      let buildingId = await this.web3Service.callContract(
+        this.contracts.BuildingsDataInstance.buildingIds,
+        [ i, {from: this.account} ]
+      );
+      buildingsIds.push(buildingId.toNumber());
+    };
+    if (!buildingsIds) {
+      console.log('No buildings');
+      return false;
+    } else {
+      console.log('All buildings');
+      console.log(buildingsIds);
+      this.getBuildingsData(buildingsIds).then(result => {
+        this.buildingsData = result;
+      });
+      return true;
     }
   }
 
   async getBuildingsData(buildingsIds: number[]) {
 
     console.log('Getting Buildings data of ' + buildingsIds);
-
-    try {
-      let buildingsData: any = {};
-      for (let buildingId of buildingsIds) {
-        await this.contracts.BuildingsDataInstance.buildings.call(buildingId, {from: this.account}).then(data => {
-          buildingsData[buildingId] = this.parseBuildingData(data);
-        });
-      };
-
-      if (!buildingsData) {
-        console.log('No buildings data');
-        return false;
-      } else {
-        console.log('Buildings Data');
-        console.log(buildingsData);
-        return buildingsData;
+    let buildingsData: any = {};
+    for (let buildingId of buildingsIds) {
+      let data = await this.web3Service.callContract(
+        this.contracts.BuildingsDataInstance.buildings,
+        [ buildingId, {from: this.account} ]
+      );
+      if (data && !data.error) {
+        buildingsData[buildingId] = this.parseBuildingData(data);
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting buildings; see log.');
+    };
+    if (!buildingsData || !buildingsData == {}) {
+      console.log('No buildings data');
+      return false;
+    } else {
+      console.log('Buildings Data');
+      console.log(buildingsData);
+      return buildingsData;
     }
   }
 

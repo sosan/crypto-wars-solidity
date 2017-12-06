@@ -57,6 +57,7 @@ contract('User Vault Test', accounts => {
   })
 
   it('Add tokens from account without e11 balance', async () => {
+    await userVault.setUserVillage(Alice);
     await experimentalToken.approve(userVault.address, 1 * ether, {from: Bob});
 
     return assertRevert(async () => {
@@ -77,7 +78,10 @@ contract('User Vault Test', accounts => {
     })
 
     it('Add tokens from account with e11', async () => {
+      await userVault.setUserVillage(Alice);
+
       let amount = 1 * ether;
+
       await userVault.add(Bob, amount);
 
       let balance = await userVault.balanceOf.call(Bob);
@@ -86,6 +90,8 @@ contract('User Vault Test', accounts => {
     })
 
     it('Add from same user twice', async () => {
+      await userVault.setUserVillage(Alice);
+
       let amount = 1 * ether;
 
       await userVault.add(Bob, amount);

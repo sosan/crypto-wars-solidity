@@ -3,6 +3,7 @@ pragma solidity ^0.4.15;
 import 'e11-contracts/contracts/ExperimentalToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import 'zeppelin-solidity/contracts/ownership/NoOwner.sol';
+import './UserVillage.sol';
 
  /**
   * @title UserVault (WIP)
@@ -25,6 +26,7 @@ contract UserVault is NoOwner {
   mapping(address => uint256) public balances;
 
 	ExperimentalToken public experimentalToken;
+  UserVillage userVillage;
 
 
   /**
@@ -36,13 +38,22 @@ contract UserVault is NoOwner {
 	}
 
   /**
+   * @notice Instantiate User Village contract.
+   * @dev Function to provide User Village address and instantiate it.
+   * @param _userVillage the address of User Village contract. (address)
+   */
+  function setUserVillage(address _userVillage) external onlyOwner {
+    userVillage = UserVillage(_userVillage);
+  }
+
+  /**
    * @dev Function to add tokens
    * @param _from The address that will receive the tokens.
    * @param _amount The amount of tokens to add.
    * @return A boolean that indicates if the operation was successful.
    */
   function add(address _from, uint256 _amount) external returns(bool) {
-    require(_amount >= 0);
+    require(msg.sender == address(userVillage));
     require(experimentalToken.transferFrom(_from, this, _amount));
     balances[_from] = balances[_from].add(_amount);
 		VaultAdd(_from, _amount);
