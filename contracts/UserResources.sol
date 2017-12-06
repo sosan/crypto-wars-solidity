@@ -238,9 +238,7 @@ contract UserResources is NoOwner {
 		require(msg.sender == owner ||
 						msg.sender == address(buildingsQueue) ||
 						msg.sender == address(userBuildings));
-		require(_gold >= 0);
-		require(_crystal >= 0);
-		require(_quantumDust >= 0);
+
 		usersResources[_user].gold += _gold;
 		usersResources[_user].crystal += _crystal;
 		usersResources[_user].quantumDust += _quantumDust;
@@ -254,10 +252,9 @@ contract UserResources is NoOwner {
 	 * Only callable from User Village contract.
 	 * @param _user The new user.
    */
-	function initPayoutBlock(address _user) external returns (bool) {
+	function initPayoutBlock(address _user) external {
 		require(msg.sender == address(userVillage));
 		usersPayoutBlock[_user] = block.number;
-		return true;
 	}
 
 	/*

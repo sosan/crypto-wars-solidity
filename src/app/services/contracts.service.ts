@@ -14,15 +14,15 @@ import UserVaultContract         from '../../../build/contracts/UserVault.json';
 import UserVillageContract       from '../../../build/contracts/UserVillage.json';
 
 /* LATEST MIGRATION TO e11 311
-  Migrations:         0x38ca16214f1d048c1adbb24accbeec45d514158c
-  ExperimentalToken:  0x50787dda82ecfff95054afb4051a2f7518c49e29
-  SimpleToken:        0x00bc5224cdffd60699ca6dd1e0170b46a73864fd
-  UserVault:          0x83ffc18451ffa7b467df8919a5dda53991b708d5
-  UserResources:      0x9d3c1c38510689a0096204b15cb8b072f05286fd
-  BuildingsData:      0x5bb173ca24da1a0b19167681b14a6df33b0c6cd4
-  UserBuildings:      0x551c13042fbdbb689f398bb1f0cbc74fbcb1eca5
-  UserVillage:        0x71461ff3a26dd5f3db7216bb2b578feb5bfdb24a
-  BuildingsQueue:     0xd60f545f6395865919be21782890bfaea534e7bf
+  Migrations:         0x7fbd6c1887176338567529edcba1a544bbebe36d
+  ExperimentalToken:  0x4feb9bf5aee70f8392a8f8d99864cf64a6017ff2
+  SimpleToken:        0xa308f0e23382b0674deac5cddc0770e803666be9
+  UserVault:          0x767266d65a510d42b22965d192329ca8022cdf90
+  UserResources:      0x810928c24082f0074754854bdf25b1f740840882
+  BuildingsData:      0xc70dedb877b90db14cc28af0bb8204b2ec8a4e3b
+  UserBuildings:      0x5db5220de8709c5109abd3afbfd230078ae10c0d
+  UserVillage:        0x17eb13848de4934596768007309f9e7a7bbe4c60
+  BuildingsQueue:     0x739d3935f4fa6d8a0384118115c417d16c030760
 */
 declare let window: any;
 
@@ -32,25 +32,25 @@ export class ContractsService {
   public error: string = '';
 
   public BuildingsData: any;
-  public BuildingsDataAddress: string = '0x5bb173ca24da1a0b19167681b14a6df33b0c6cd4';
+  public BuildingsDataAddress: string = '0xc70dedb877b90db14cc28af0bb8204b2ec8a4e3b';
   public BuildingsDataInstance: any;
   public BuildingsQueue: any;
-  public BuildingsQueueAddress: string = '0xd60f545f6395865919be21782890bfaea534e7bf';
+  public BuildingsQueueAddress: string = '0x739d3935f4fa6d8a0384118115c417d16c030760';
   public BuildingsQueueInstance: any;
   public ExperimentalToken: any;
-  public ExperimentalTokenAddress: string = '0x50787dda82ecfff95054afb4051a2f7518c49e29';
+  public ExperimentalTokenAddress: string = '0x4feb9bf5aee70f8392a8f8d99864cf64a6017ff2';
   public ExperimentalTokenInstance: any;
   public UserBuildings: any;
-  public UserBuildingsAddress: string = '0x551c13042fbdbb689f398bb1f0cbc74fbcb1eca5';
+  public UserBuildingsAddress: string = '0x5db5220de8709c5109abd3afbfd230078ae10c0d';
   public UserBuildingsInstance: any;
   public UserResources: any;
-  public UserResourcesAddress: string = '0x9d3c1c38510689a0096204b15cb8b072f05286fd';
+  public UserResourcesAddress: string = '0x810928c24082f0074754854bdf25b1f740840882';
   public UserResourcesInstance: any;
   public UserVault: any;
-  public UserVaultAddress: string = '0x83ffc18451ffa7b467df8919a5dda53991b708d5';
+  public UserVaultAddress: string = '0x767266d65a510d42b22965d192329ca8022cdf90';
   public UserVaultInstance: any;
   public UserVillage: any;
-  public UserVillageAddress: string = '0x71461ff3a26dd5f3db7216bb2b578feb5bfdb24a';
+  public UserVillageAddress: string = '0x17eb13848de4934596768007309f9e7a7bbe4c60';
   public UserVillageInstance: any;
 
   constructor(private web3Service: Web3Service) {

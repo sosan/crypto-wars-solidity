@@ -18,7 +18,7 @@ export class VillageComponent implements OnInit {
   accounts: string[];
 
   amount: number = 5;
-  receiver: string = '';
+  receiver: string = '0xf8e16b483cafae8d55d9d4067447990de27ddbdd';
 
   status = '';
   userName: string = 'Lucho';
@@ -44,60 +44,34 @@ export class VillageComponent implements OnInit {
   }
 
   async sendEther() {
-    console.log('Sending ethers' + this.amount + ' to ' + this.receiver);
-
-    this.setStatus('Initiating transaction... (please wait)');
-    try {
-      const transaction = await this.web3Service.web3.eth.sendTransaction({from: this.account, to: this.receiver, value: this.amount * ether});
-
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
+    console.log('Sending ethers ' + this.amount + ' to ' + this.receiver);
+    await this.web3Service.sendTransaction({from: this.account, to: this.receiver, value: this.amount * ether},
+      (error, data) => {
+        console.log(error? error : 'ether sent!');
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error sending ether; see log.');
-    }
+    );
   }
+
   async sendCoin() {
-    console.log('Sending tokens' + this.amount + ' to ' + this.receiver);
-
-    this.setStatus('Initiating transaction... (please wait)');
-    try {
-      const transaction = await this.contracts.ExperimentalTokenInstance.transfer.sendTransaction(this.receiver, this.amount * ether, {from: this.account});
-
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
+    console.log('Sending tokens ' + this.amount + ' to ' + this.receiver);
+    await this.web3Service.sendContractTransaction(
+      this.contracts.ExperimentalTokenInstance.transfer,
+      [ this.receiver, this.amount * ether, {from: this.account} ],
+      (error, data) => {
+        console.log(error? error : 'token sent!');
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error sending coin; see log.');
-    }
+    );
   }
 
   async approve() {
     console.log('Approving ' + this.approveAmount * ether + ' tokens to ' + this.approveAddress);
-
-    this.setStatus('Initiating transaction... (please wait)');
-    try {
-      const transaction = await this.contracts.ExperimentalTokenInstance.approve.sendTransaction(
-        this.approveAddress,
-        this.approveAmount * ether,
-        { from: this.account }
-      );
-
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
+    await this.web3Service.sendContractTransaction(
+      this.contracts.ExperimentalTokenInstance.approve,
+      [ this.approveAddress, this.approveAmount * ether, {from: this.account} ],
+      (error, data) => {
+        console.log(error? error : 'token approved!');
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error sending coin; see log.');
-    }
+    );
   }
 
   async createVillage() {
@@ -119,68 +93,31 @@ export class VillageComponent implements OnInit {
     }
 
     console.log('Creating Village: ' + this.villageName + ' by ' + this.userName);
-
-    this.setStatus('Initiating transaction... (please wait)');
-    try {
-      const transaction = await this.contracts.UserVillageInstance.create.sendTransaction(
-        this.villageName,
-        this.userName,
-        { from: this.account }
-      );
-
-      console.log(transaction);
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
+    await this.web3Service.sendContractTransaction(
+      this.contracts.UserVillageInstance.create,
+      [ this.villageName, this.userName, {from: this.account} ],
+      (error, data) => {
+        console.log(error? error : 'village created!');
       }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error creating village; see log.');
-    }
+    );
   }
 
   async getVillage() {
     console.log('Getting Village of ' + this.account);
-
-    try {
-      const transaction = await this.contracts.UserVillageInstance.villages.call(this.account, {from: this.account});
-
-      if (!transaction) {
-        console.log('User has no village');
-        return false;
-      } else {
-        console.log('User village');
-        console.log(transaction);
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting village; see log.');
-    }
+    const result = await this.web3Service.callContract(
+      this.contracts.UserVillageInstance.villages,
+      [ this.account, {from: this.account} ]
+    );
+    console.log(result.error? result.error : result);
   }
 
   async getVaultAllowance() {
     console.log('Getting vault allowance of ' + this.account);
-
-    try {
-      const transaction = await this.contracts.ExperimentalTokenInstance.allowance.call(
-        this.account,
-        this.contracts.UserVaultInstance.address,
-        { from: this.account }
-      );
-
-      if (!transaction) {
-        console.log('Vault has no allowance');
-        return false;
-      } else {
-        console.log('Vault has allowance: ' + transaction);
-        return transaction;
-      }
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting vault allowance; see log.');
-    }
+    const result = await this.web3Service.callContract(
+      this.contracts.UserVillageInstance.allowance,
+      [ this.account, this.contracts.UserVaultInstance.address, {from: this.account} ]
+    );
+    console.log(result.error? result.error : result);
   }
 
 }

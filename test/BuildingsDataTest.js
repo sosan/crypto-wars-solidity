@@ -31,15 +31,93 @@ contract('Buildings Data Test', accounts => {
     })
   })
 
-  it('Add Building with negative Health', async () => {
+  it('Add Building with negative health', async () => {
     return assertRevert(async () => {
       await buildingsData.addBuilding(44, 'Wall', [-20, 50, 0, 3000, 4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative defense', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, -50, 0, 3000, 4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative attack', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, -5, 3000, 4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative gold capacity', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, -3000, 4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative crystal capacity', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, -4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative gold rate', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, -5, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative crystal rate', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, -5, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative price', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, 5, -2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative resource', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, 5, 2, -5, 0, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative blocks', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, 5, 2, 5, -5, 0, 0]);
+    })
+  })
+
+  it('Add Building with negative previos level id', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, 5, 2, 5, 5, -5, 0]);
+    })
+  })
+
+  it('Add Building with negative type id', async () => {
+    return assertRevert(async () => {
+      await buildingsData.addBuilding(44, 'Wall', [20, 50, 5, 3000, 4000, 5, 5, 2, 5, 5, 5, -5]);
     })
   })
 
   it('Add Building with negative Health and empty name', async () => {
     return assertRevert(async () => {
       await buildingsData.addBuilding(2, '', [-20, 50, 0, 3000, 4000, 0, 0, 2, 0, 0, 0, 0]);
+    })
+  })
+
+  it('Get non existan building data', async () => {
+    return assertRevert(async () => {
+      const [price, resources, blocks] = await buildingsData.getBuildingData.call(865);
+    })
+  })
+
+  it('Get gold and crystal rates of non existan building', async () => {
+    return assertRevert(async () => {
+      const [goldRate, crystalRate] = await buildingsData.getGoldAndCrystalRates.call(865);
     })
   })
 

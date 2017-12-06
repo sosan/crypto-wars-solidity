@@ -67,6 +67,39 @@ export class Web3Service {
     this.web3.currentProvider.send({jsonrpc: "2.0", method: "evm_mine", params: [], id: 0}, (e,r) => {});
   }
 
+  public async sendTransaction(data: any, callback = null) {
+    try {
+      const transaction = await this.web3.eth.sendTransaction(data);
+      if (callback && transaction && transaction.transactionHash) {
+        this.web3.eth.getTransactionReceipt(transaction.transactionHash, callback);
+      }
+      return transaction? {transaction} : {error: 'Transaction failed!'};
+    } catch (e) {
+      return {error: e};
+    }
+  }
+
+  public async sendContractTransaction(contractMethod, args, callback = null) {
+    try {
+      const transaction = await contractMethod.sendTransaction(...args);
+      if (callback && transaction && transaction.transactionHash) {
+        this.web3.eth.getTransactionReceipt(transaction.transactionHash, callback);
+      }
+      return transaction? {transaction} : {error: 'Transaction failed!'};
+    } catch (e) {
+      return {error: e};
+    }
+  }
+
+  public async callContract(contractMethod, args) {
+    try {
+      const transaction = await contractMethod.call(...args);
+      return transaction? transaction : {error: 'Transaction failed!'};
+    } catch (e) {
+      return {error: e};
+    }
+  }
+
   private refreshAccounts() {
     this.web3.eth.getAccounts((err, accounts) => {
       if (err != null) {

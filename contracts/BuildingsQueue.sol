@@ -191,11 +191,9 @@ contract BuildingsQueue is NoOwner {
     if (buildingIsInQueue) {
       updateQueue(msg.sender);
     }
-    
-    require(userBuildings.upgradeBuilding(msg.sender, _id, _index));
 
     require(userBuildings.upgradeBuilding(msg.sender, _id, _index));
-    
+
     uint price;
     uint resourceType;
     uint blocks;
@@ -258,7 +256,6 @@ contract BuildingsQueue is NoOwner {
    * and a uint representing the index/position of the building in the queue.
    */
   function findBuildingInQueue(address _user, uint _id, uint _index) public view returns (bool exists, uint indexInQueue) {
-    require(_index >= 0);
     for (uint i = 0; i < userBuildingsQueue[_user].length; i++) {
       if (_index == userBuildingsQueue[_user][i].index && _id == userBuildingsQueue[_user][i].id) {
         return (true, i);
@@ -456,10 +453,9 @@ contract BuildingsQueue is NoOwner {
    * @param _user The address of the user's queue to search in. (address)
    * @param _index The index of the element to return in the array. (uint)
    */
-  function getBuildingIdAndEndBlock(address _user, uint _index) external returns (uint id, uint endBlock) {
-    require(_index >= 0);
-    require(userBuildingsQueue[_user].length >= _index);
-    return (userBuildingsQueue[_user][_index].id, userBuildingsQueue[_user][_index].endBlock);
+  function getBuildingIdAndEndBlock(address _user, uint _indexInQueue) external returns (uint id, uint endBlock) {
+    require(userBuildingsQueue[_user].length > _indexInQueue);
+    return (userBuildingsQueue[_user][_indexInQueue].id, userBuildingsQueue[_user][_indexInQueue].endBlock);
   }
 
   /*

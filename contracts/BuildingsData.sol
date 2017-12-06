@@ -75,7 +75,6 @@ contract BuildingsData is NoOwner {
                        string name,
                        int32[] stats) external onlyOwner {
 
-    require(id >= 0);
     require(keccak256(buildings[id].name) == keccak256(""));
     require(keccak256(name) != keccak256(""));
     require(stats[0] >= 0); //"health"
@@ -127,7 +126,6 @@ contract BuildingsData is NoOwner {
   function updateBuilding(uint id,
                           string name,
                           int32[] stats) external onlyOwner {
-    require(id >= 0);
     require(keccak256(buildings[id].name) != keccak256(""));
 
     updateBuildingBasicsA(id, name, stats);
@@ -224,7 +222,6 @@ contract BuildingsData is NoOwner {
    * @return A boolean that indicates if the building exists or not.
    */
   function checkBuildingExist(uint _id) external returns (bool) {
-    require(_id >= 0);
     require(keccak256(buildings[_id].name) != keccak256(""));
     return true;
   }
@@ -251,7 +248,6 @@ contract BuildingsData is NoOwner {
   function getBuildingData(uint _id) external returns (uint price,
                                                        uint resource,
                                                        uint blocks) {
-    require(_id >= 0);
     require(keccak256(buildings[_id].name) != keccak256(""));
     return (
       uint(buildings[_id].price),
@@ -268,7 +264,6 @@ contract BuildingsData is NoOwner {
    */
   function getGoldAndCrystalRates(uint _id) external returns (uint goldRate,
                                                               uint crystalRate) {
-    require(_id >= 0);
     require(keccak256(buildings[_id].name) != keccak256(""));
     return (uint(buildings[_id].goldRate), uint(buildings[_id].crystalRate));
   }

@@ -29,6 +29,9 @@ module.exports = function(deployer) {
     let userBuildings = await UserBuildings.deployed();
     let buildingsData = await BuildingsData.deployed();
     let buildingsQueue = await BuildingsQueue.deployed();
+    let userVault = await UserVault.deployed();
+
+    await userVillage.setBuildingsData(BuildingsData.address);
 
     await userResources.setUserVillage(UserVillage.address);
     await userResources.setUserBuildings(UserBuildings.address);
@@ -41,6 +44,8 @@ module.exports = function(deployer) {
     await buildingsQueue.setUserResources(UserResources.address);
     await buildingsQueue.setUserBuildings(UserBuildings.address);
     await buildingsQueue.setBuildingsData(BuildingsData.address);
+
+    await userVault.setUserVillage(UserVillage.address);
 
     // Initialize buildings data
     await buildingsData.addBuilding(buildingsMock.initialBuildings[0].id,

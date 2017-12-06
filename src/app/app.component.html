@@ -41,6 +41,9 @@
       </li>
     </ul>
 
+    <span class="navbar-text" style="margin-right: 1em;" *ngIf="lastBlock">
+      Last Block: {{lastBlock}}
+    </span>
     <span class="navbar-text" style="margin-right: 1em;">
       {{e11Balance || 0}} E11
     </span>
@@ -51,11 +54,16 @@
 </nav>
 
 
-<app-village *ngIf="section == 'village'"
-             [account]="account"
-             [balance]="balance">
-</app-village>
-<app-resources *ngIf="section == 'resources'"
-             [account]="account"
-             [balance]="balance">
-</app-resources>
+<ng-template [ngIf]="status.error">
+  {{status.error}}
+</ng-template>
+<ng-template [ngIf]="status.ready">
+  <app-village *ngIf="section == 'village'"
+               [account]="account"
+               [balance]="balance">
+  </app-village>
+  <app-resources *ngIf="section == 'resources'"
+               [account]="account"
+               [balance]="balance">
+  </app-resources>
+</ng-template>

@@ -128,7 +128,6 @@ contract UserBuildings is NoOwner {
     uint length = _ids.length;
 
     for (uint i = 0; i < length; i++) {
-      require(_ids[i] >= 0);
       require(buildingsData.checkBuildingExist(_ids[i]));
     }
 
@@ -152,7 +151,6 @@ contract UserBuildings is NoOwner {
     require(msg.sender == address(userVillage));
 
     for (uint i = 0; i < _ids.length; i++) {
-      require(_ids[i] >= 0);
       require(buildingsData.checkBuildingExist(_ids[i]));
     }
 
@@ -174,6 +172,7 @@ contract UserBuildings is NoOwner {
    * @return A uint that indicates the index of the initialized building.
    */
   function initNewBuilding(address _user, uint _id) external returns (uint index) {
+    require(msg.sender == address(buildingsQueue));
     require(buildingsData.checkBuildingExist(_id));
 
     userBuildings[_user].push(Building(_id, false));
@@ -193,6 +192,7 @@ contract UserBuildings is NoOwner {
    * @return A boolean that indicates if the operation was successful.
    */
   function removeUserBuildings(address _user, uint[] _ids, uint[] _indexes) external returns (bool) {
+    require(msg.sender == address(buildingsQueue));
     require(_ids.length == _indexes.length);
 
     for (uint i = 0; i < _ids.length; i++) {
