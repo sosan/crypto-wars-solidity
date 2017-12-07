@@ -7,6 +7,13 @@
 This repository holds all the smart contracts that are going to be used on the game [Crypto Wars](https://e11.io).
 Please check the [documentation](https://e11-io.github.io/crypto-wars-solidity/) for more details.
 
+
+## Requirements
+
+- [geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
+- [metamask](https://metamask.io), [mist](https://github.com/ethereum/mist/releases) or similar web3 alternative.
+
+
 ## Installation
 
 1. Install truffle and an ethereum client. For local development, try EthereumJS TestRPC.
